@@ -20,12 +20,13 @@ HRESULT SxSAddRegPackage(SxSPackage package, std::wstring regpath, int operation
 		}
 		else {
 			RegAddSZ(basekey, L"", package.version);
-			RegAddSZ(basekeypend, packagefamily.genname(), package.version);
+			RegAddDWORD(basekeypend + L"\\" + package.genname(), L"", operation);
 		}
+
 	}
 	else {
 		RegAddSZ(basekey, L"", package.version);
-		RegAddSZ(basekeypend, packagefamily.genname(), package.version);
+		RegAddDWORD(basekeypend+L"\\"+package.genname(), L"", operation);
 	}
 	RegAddDWORD(basekey, package.version, operation);
 	return S_OK;
@@ -50,12 +51,12 @@ HRESULT SxSAddRegAssembly(SxSAssembly assembly, std::wstring regpath, int operat
 		}
 		else {
 			RegAddSZ(basekey, L"", assembly.version);
-			RegAddSZ(basekeypend, assemblyfamily.genname(), assembly.version);
+			RegAddDWORD(basekeypend + L"\\" + assembly.genname(), L"", operation);
 		}
 	}
 	else {
 		RegAddSZ(basekey, L"", assembly.version);
-		RegAddSZ(basekeypend, assemblyfamily.genname(), assembly.version);
+		RegAddDWORD(basekeypend + L"\\" + assembly.genname(), L"", operation);
 	}
 	RegAddDWORD(basekey, assembly.version, operation);
 	return S_OK;
@@ -81,13 +82,16 @@ HRESULT SxSAddRegDeployment(SxSAssembly assembly, std::wstring regpath, int oper
 		}
 		else {
 			RegAddSZ(basekey, L"", assembly.version);
-			RegAddSZ(basekeypend, assemblyfamily.genname(), assembly.version);
+			RegAddDWORD(basekeypend + L"\\" + assembly.genname(), L"", operation);
 		}
 	}
 	else {
 		RegAddSZ(basekey, L"", assembly.version);
-		RegAddSZ(basekeypend, assemblyfamily.genname(), assembly.version);
+		RegAddDWORD(basekeypend + L"\\" + assembly.genname(), L"", operation);
 	}
 	RegAddDWORD(basekey, assembly.version, operation);
 	return S_OK;
+}
+std::vector<SxSPackage> SxSGetRegPKGS(std::wstring regpath) {
+	
 }

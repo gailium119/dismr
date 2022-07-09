@@ -36,6 +36,9 @@
     <ClCompile Include="sxsreg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="getsxs.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="havesxs.h">
@@ -54,6 +57,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="regstub.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="getsxs.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

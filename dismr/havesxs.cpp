@@ -64,9 +64,41 @@ HRESULT SxSPackage::LoadFromFile(std::wstring filename)
 	elements[0].Release();
 	return hr;
 }
+HRESULT SxSPackage::Verify(std::wstring folder)
+{
+	std::wstring filename = folder + L"\\" + this->genname() + L".rum";
+	if (!PathFileExists(filename.c_str())) return 0x80070002;
+	HRESULT hr = this->sxsxmldoc.Load(filename.c_str());
+	if (FAILED(hr)) return hr;
+	SxSXmlElementTable table;
+	hr = table.SelectFromDocument(this->sxsxmldoc, L"./assembly/assemblyIdentity");
+	auto elements = table.GetElements();
+
+	auto name = elements[0].GetAttr(L"name");
+	auto lang = elements[0].GetAttr(L"language");
+	auto processorArchitecture = elements[0].GetAttr(L"processorArchitecture");
+	auto publicKeyToken = elements[0].GetAttr(L"publicKeyToken");
+	auto version = elements[0].GetAttr(L"version");
+	if (_wcsicmp(lang.c_str(), L"none") == 0) lang = L"";
+	if (_wcsicmp(lang.c_str(), L"neutral") == 0) lang = L"";
+	if (_wcsicmp(lang.c_str(), L"*") == 0) lang = L"";
+	if (_wcsicmp(version.c_str(), L"") == 0) version = L"";
+	if (_wcsicmp(processorArchitecture.c_str(), L"neutral") == 0) processorArchitecture = L"none";
+	if (_wcsicmp(processorArchitecture.c_str(), L"*") == 0) processorArchitecture = L"none";
+	if (_wcsicmp(processorArchitecture.c_str(), L"") == 0) processorArchitecture = L"none";
+	if (_wcsicmp(name.c_str(), this->name.c_str())) hr = 0x80073716;
+	if (_wcsicmp(lang.c_str(), this->lang.c_str())) hr = 0x80073716;
+	if (_wcsicmp(processorArchitecture.c_str(), this->processorArchitecture.c_str())) hr = 0x80073716;
+	if (_wcsicmp(publicKeyToken.c_str(), this->publicKeyToken.c_str())) hr = 0x80073716;
+	if (_wcsicmp(version.c_str(), this->version.c_str())) hr = 0x80073716;
+	table.Release();
+	elements[0].Release();
+	if (hr == S_OK) this->status = 1;
+	return hr;
+}
 void SxSPackage::Release()
 {
-	this->sxsxmldoc.XmlDoc->Release();
+	if(this->sxsxmldoc.XmlDoc)this->sxsxmldoc.XmlDoc->Release();
 }
 std::vector<SxSDeployment> SxSPackage::GetComponents()
 {
@@ -98,6 +130,32 @@ std::vector<SxSDeployment> SxSPackage::GetComponents()
 	for (int i = 0; i < elements.size(); i++) elements[i].Release();
 	return components;
 }
+std::vector<SxSPackage> SxSPackage::GetSubPackages()
+{
+	SxSXmlElementTable table;
+	HRESULT hr = table.SelectFromDocument(this->sxsxmldoc, L"./assembly/package/update/package/assemblyIdentity");
+	auto elements = table.GetElements();
+	std::vector<SxSPackage> pkgs;
+	for (int i = 0; i < elements.size(); i++) {
+		SxSPackage pkg;
+		pkg.name = elements[i].GetAttr(L"name");
+		pkg.lang = elements[i].GetAttr(L"language");
+		pkg.processorArchitecture = elements[i].GetAttr(L"processorArchitecture");
+		pkg.publicKeyToken = elements[i].GetAttr(L"publicKeyToken");
+		pkg.version = elements[i].GetAttr(L"version");
+		if (_wcsicmp(pkg.lang.c_str(), L"none") == 0) pkg.lang = L"";
+		if (_wcsicmp(pkg.lang.c_str(), L"neutral") == 0) pkg.lang = L"";
+		if (_wcsicmp(pkg.lang.c_str(), L"*") == 0) pkg.lang = L"";
+		if (_wcsicmp(pkg.version.c_str(), L"none") == 0) pkg.version = L"";
+		if (_wcsicmp(pkg.processorArchitecture.c_str(), L"neutral") == 0) pkg.processorArchitecture = L"";
+		if (_wcsicmp(pkg.processorArchitecture.c_str(), L"*") == 0) pkg.processorArchitecture = L"";
+		if (_wcsicmp(pkg.processorArchitecture.c_str(), L"none") == 0) pkg.processorArchitecture = L"";
+		pkgs.push_back(pkg);
+	}
+	table.Release();
+	for (int i = 0; i < elements.size(); i++) elements[i].Release();
+	return pkgs;
+}
 HRESULT SxSAssembly::LoadFromFile(std::wstring filename) {
 	HRESULT hr=this->sxsxmldoc.Load(filename.c_str());
 	if (FAILED(hr)) return hr;
@@ -126,7 +184,7 @@ HRESULT SxSAssembly::LoadFromFile(std::wstring filename) {
 }
 void SxSAssembly::Release() {
 	//free(this->sxsxmldoc.XmlDoc);
-	this->sxsxmldoc.XmlDoc->Release();
+	if (this->sxsxmldoc.XmlDoc)this->sxsxmldoc.XmlDoc->Release();
 }
 std::vector<SxSFile> SxSAssembly::GetFiles()
 {  

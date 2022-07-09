@@ -97,8 +97,9 @@ HRESULT RegGetDWORD(std::wstring keyName, std::wstring name, DWORD* outvalue) {
 		}
 	}
 	HKEY hRes = NULL;
+	DWORD MAX_SIZE = 260;
 	HRESULT hr = RegCreateKeyW(basekey, keyName.c_str(), &hRes);
-	hr = RegQueryValueExW(hRes, name.c_str(), 0, NULL, (BYTE*)outvalue, NULL);
+	hr = RegQueryValueExW(hRes, name.c_str(), 0, NULL, (BYTE*)outvalue, &MAX_SIZE);
 	return hr;
 }
 
@@ -137,4 +138,55 @@ HRESULT RegGetSZ(std::wstring keyName, std::wstring name, std::wstring* outvalue
 	hr = RegQueryValueExW(hRes, name.c_str(), 0, NULL, (BYTE*)data, &MAX_SIZE);
 	*outvalue = data;
 	return hr;
+}
+
+std::vector<std::wstring> RegEnum(std::wstring keyName)
+{
+
+	size_t keyfind = 1;
+	HKEY basekey;
+	keyfind = keyName.find(L"HKEY_LOCAL_MACHINE");
+	if (keyfind == 0) {
+		basekey = HKEY_LOCAL_MACHINE;
+		//keyName = 0;
+		keyName = keyName.substr(19);
+	}
+	else {
+		keyfind = keyName.find(L"HKEY_CURRENT_USER");
+		if (keyfind == 0) {
+			basekey = HKEY_CURRENT_USER;
+			//keyName = 0;
+			keyName = keyName.substr(18);
+		}
+		else {
+			keyfind = keyName.find(L"HKEY_CLASSES_ROOT");
+			if (keyfind == 0) {
+				basekey = HKEY_CLASSES_ROOT;
+				//keyName = 0;
+				keyName = keyName.substr(18);
+			}
+			else {
+				return std::vector<std::wstring>();
+			}
+		}
+	}
+	HKEY hKey = NULL; //保存注册表的句柄 
+	DWORD dwIndexs = 0; //需要返回子项的索引 
+	WCHAR keyNames[MAX_PATH] = { 0 }; //保存子键的名称 
+	DWORD charLength = 256;  //想要读取多少字节并返回实际读取到的字符长度
+	WCHAR* subKey = L"SOFT\\Microsoft\\Windows\\CurrentVersion\\CBS\\PackagePending";
+	std::vector<std::wstring> allregs;
+	RegOpenKeyExW(basekey, keyName.c_str(), 0, KEY_READ, &hKey);
+	while (RegEnumKeyExW(hKey, dwIndexs, keyNames, &charLength, NULL, NULL, NULL, NULL) == ERROR_SUCCESS)
+	{
+		++dwIndexs;
+		charLength = 256;
+		allregs.push_back(keyNames);
+	}
+	return allregs;
+}
+
+HRESULT RegDeleteSubKey(std::wstring keyName)
+{
+	return E_NOTIMPL;
 }

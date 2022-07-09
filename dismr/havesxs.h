@@ -108,8 +108,10 @@ public:
 	std::wstring processorArchitecture = L"";
 	std::wstring genname();
 	HRESULT LoadFromFile(std::wstring filename);
+	HRESULT Verify(std::wstring folder);
 	void Release();
 	std::vector<SxSDeployment> GetComponents();
+	std::vector<SxSPackage> GetSubPackages();
 protected:
 	SxSXmlDoc sxsxmldoc;
 	int status = 0;
