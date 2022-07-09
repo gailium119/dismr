@@ -92,6 +92,16 @@ HRESULT SxSAddRegDeployment(SxSAssembly assembly, std::wstring regpath, int oper
 	RegAddDWORD(basekey, assembly.version, operation);
 	return S_OK;
 }
+HRESULT SxSRemovePendingPackages(std::wstring regpath)
+{
+	std::wstring basekeypend = regpath + L"\\Microsoft\\Windows\\CurrentVersion\\CBS\\PackagePending";
+	return RegDeleteSubKey(basekeypend);
+}
+HRESULT SxSRemovePendingDeployments(std::wstring regpath)
+{
+	std::wstring basekeypend = regpath + L"\\Microsoft\\Windows\\CurrentVersion\\CBS\\DeploymentsPending";
+	return RegDeleteSubKey(basekeypend);
+}
 std::vector<SxSPackage> SxSGetRegPKGS(std::wstring regpath) {
 	
 }

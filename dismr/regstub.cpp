@@ -188,5 +188,32 @@ std::vector<std::wstring> RegEnum(std::wstring keyName)
 
 HRESULT RegDeleteSubKey(std::wstring keyName)
 {
-	return E_NOTIMPL;
+	size_t keyfind = 1;
+	HKEY basekey;
+	keyfind = keyName.find(L"HKEY_LOCAL_MACHINE");
+	if (keyfind == 0) {
+		basekey = HKEY_LOCAL_MACHINE;
+		//keyName = 0;
+		keyName = keyName.substr(19);
+	}
+	else {
+		keyfind = keyName.find(L"HKEY_CURRENT_USER");
+		if (keyfind == 0) {
+			basekey = HKEY_CURRENT_USER;
+			//keyName = 0;
+			keyName = keyName.substr(18);
+		}
+		else {
+			keyfind = keyName.find(L"HKEY_CLASSES_ROOT");
+			if (keyfind == 0) {
+				basekey = HKEY_CLASSES_ROOT;
+				//keyName = 0;
+				keyName = keyName.substr(18);
+			}
+			else {
+				return S_FALSE;
+			}
+		}
+	}
+	return RegDeleteTreeW(basekey,keyName.c_str());
 }
