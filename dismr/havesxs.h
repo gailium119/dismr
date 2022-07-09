@@ -7,6 +7,9 @@
 #define SXS_HIVE_SOFT L"HKEY_LOCAL_MACHINE\\soft"
 #define SXS_HIVE_SYS L"HKEY_LOCAL_MACHINE\\sys"
 #define SXS_HIVE_DEF L"HKEY_LOCAL_MACHINE\\def"
+#define SXS_HIVE_SOFT_SHORT L"soft"
+#define SXS_HIVE_SYS_SHORT L"sys"
+#define SXS_HIVE_DEF_SHORT L"def"
 #define SXS_INSTALLED 0
 #define SXS_STAGED 9
 class SxSFile {

@@ -31,6 +31,7 @@ HRESULT RegAddSZ(std::wstring keyName, std::wstring name, std::wstring value) {
 	HKEY hRes = NULL;
 	HRESULT hr = RegCreateKeyW(basekey, keyName.c_str(), &hRes);
 	hr = RegSetValueExW(hRes, name.c_str(), 0, REG_SZ, (BYTE*)value.c_str(), value.length() * sizeof(wchar_t));
+	RegCloseKey(hRes);
 	return hr;
 }
 
@@ -65,6 +66,7 @@ HRESULT RegAddMulti(std::wstring keyName, std::wstring name, std::wstring value)
 	HKEY hRes = NULL;
 	HRESULT hr = RegCreateKeyW(basekey, keyName.c_str(), &hRes);
 	hr = RegSetValueExW(hRes, name.c_str(), 0, REG_MULTI_SZ, (BYTE*)value.c_str(), value.length() * sizeof(wchar_t));
+	RegCloseKey(hRes);
 	return hr;
 }
 HRESULT RegAddDWORD(std::wstring keyName, std::wstring name, DWORD value) {
@@ -98,6 +100,7 @@ HRESULT RegAddDWORD(std::wstring keyName, std::wstring name, DWORD value) {
 	HKEY hRes = NULL;
 	HRESULT hr = RegCreateKeyW(basekey, keyName.c_str(), &hRes);
 	hr = RegSetValueExW(hRes, name.c_str(), 0, REG_DWORD, (BYTE*)&value, sizeof(DWORD));
+	RegCloseKey(hRes);
 	return hr;
 }
 
@@ -133,6 +136,7 @@ HRESULT RegGetDWORD(std::wstring keyName, std::wstring name, DWORD* outvalue) {
 	DWORD MAX_SIZE = 260;
 	HRESULT hr = RegCreateKeyW(basekey, keyName.c_str(), &hRes);
 	hr = RegQueryValueExW(hRes, name.c_str(), 0, NULL, (BYTE*)outvalue, &MAX_SIZE);
+	RegCloseKey(hRes);
 	return hr;
 }
 
@@ -170,6 +174,7 @@ HRESULT RegGetSZ(std::wstring keyName, std::wstring name, std::wstring* outvalue
 	DWORD MAX_SIZE = 260;
 	hr = RegQueryValueExW(hRes, name.c_str(), 0, NULL, (BYTE*)data, &MAX_SIZE);
 	*outvalue = data;
+	RegCloseKey(hRes);
 	return hr;
 }
 
@@ -217,6 +222,7 @@ std::vector<std::wstring> RegEnum(std::wstring keyName)
 		allregs.push_back(keyNames);
 	}
 	RegCloseKey(basekey);
+	RegCloseKey(hKey);
 	return allregs;
 }
 
