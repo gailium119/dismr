@@ -39,6 +39,15 @@
     <ClCompile Include="getsxs.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="base64.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="sha256.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="sxsinstall.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="havesxs.h">
@@ -60,6 +69,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="getsxs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="base64.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sha256.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sxsinstall.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,7 +13,7 @@ std::wstring generate_sxs_name(SxSAssembly assembly) {
 	std::wstring pseudo_key = generate_pseudo_key(assembly);
 	
 	std::wstring sxs_name = L""; 
-	//assembly.name.erase(std::remove(assembly.name.begin(), assembly.name.end(), ' '), assembly.name.end());
+	assembly.name.erase(std::remove(assembly.name.begin(), assembly.name.end(), ' '), assembly.name.end());
 	if (assembly.name.length() > 40) {
 		assembly.name = assembly.name.substr(0, 19) + L".." + assembly.name.substr(assembly.name.length() - 19, assembly.name.length());
 	}
@@ -217,8 +217,8 @@ std::vector<SxSRegistry> SxSAssembly::GetReg()
 	SxSXmlElementTable table, subtable;
 	HRESULT hr = table.SelectFromDocument(this->sxsxmldoc, L"./assembly/registryKeys/registryKey");
 	auto elements = table.GetElements();
-	SxSRegistry tmpreg;
 	for (int i = 0; i < elements.size(); i++) {
+		SxSRegistry tmpreg;
 		tmpreg.keyname = elements[i].GetAttr(L"keyName");
 		hr = subtable.SelectFromElement(elements[i], L"./registryValue");
 		auto regsubkeys = subtable.GetElements();

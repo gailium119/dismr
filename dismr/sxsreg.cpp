@@ -1,6 +1,6 @@
 #include"sxsreg.h"
 
-HRESULT SxSAddRegPackage(SxSPackage package, std::wstring regpath, int operation) {
+HRESULT SxSAddRegPackage(SxSPackage package, std::wstring regpath, int operation, _In_opt_ bool bToInstall) {
 	SxSPackage packagefamily = package;
 	packagefamily.version = L"";
 	std::wstring basekey = regpath + L"\\Microsoft\\Windows\\CurrentVersion\\CBS\\Packages";
@@ -16,7 +16,12 @@ HRESULT SxSAddRegPackage(SxSPackage package, std::wstring regpath, int operation
 			printf("Skipping\n");
 		}
 		else if (over == nver) {
-			return S_FALSE;
+			DWORD origoperation;
+			RegGetDWORD(basekey, package.version, &origoperation);
+			if (origoperation == operation||(bToInstall&&(origoperation==SXS_INSTALLED))) {
+				return S_FALSE;
+			}
+			RegAddDWORD(basekeypend + L"\\" + package.genname(), L"", operation);
 		}
 		else {
 			RegAddSZ(basekey, L"", package.version);
@@ -26,12 +31,12 @@ HRESULT SxSAddRegPackage(SxSPackage package, std::wstring regpath, int operation
 	}
 	else {
 		RegAddSZ(basekey, L"", package.version);
-		RegAddDWORD(basekeypend+L"\\"+package.genname(), L"", operation);
+		RegAddDWORD(basekeypend + L"\\" + package.genname(), L"", operation);
 	}
 	RegAddDWORD(basekey, package.version, operation);
 	return S_OK;
 }
-HRESULT SxSAddRegAssembly(SxSAssembly assembly, std::wstring regpath, int operation) {
+HRESULT SxSAddRegAssembly(SxSAssembly assembly, std::wstring regpath, int operation, _In_opt_ bool bToInstall) {
 	SxSAssembly assemblyfamily = assembly;
 	assemblyfamily.winners = true;
 	std::wstring basekey = regpath + L"\\Microsoft\\Windows\\CurrentVersion\\CBS\\Assemblies";
@@ -47,7 +52,13 @@ HRESULT SxSAddRegAssembly(SxSAssembly assembly, std::wstring regpath, int operat
 			printf("Skipping\n");
 		}
 		else if (over == nver) {
-			return S_FALSE;
+			DWORD origoperation;
+			RegGetDWORD(basekey, assembly.version, &origoperation);
+			if (origoperation == operation || (bToInstall && (origoperation == SXS_INSTALLED))) {
+				return S_FALSE;
+			}
+
+			RegAddDWORD(basekeypend + L"\\" + assembly.genname(), L"", operation);
 		}
 		else {
 			RegAddSZ(basekey, L"", assembly.version);
@@ -62,7 +73,7 @@ HRESULT SxSAddRegAssembly(SxSAssembly assembly, std::wstring regpath, int operat
 	return S_OK;
 }
 
-HRESULT SxSAddRegDeployment(SxSAssembly assembly, std::wstring regpath, int operation) {
+HRESULT SxSAddRegDeployment(SxSAssembly assembly, std::wstring regpath, int operation, _In_opt_ bool bToInstall) {
 	SxSAssembly assemblyfamily = assembly;
 	assemblyfamily.winners = true;
 	std::wstring basekey = regpath + L"\\Microsoft\\Windows\\CurrentVersion\\CBS\\Deployments";
@@ -78,7 +89,12 @@ HRESULT SxSAddRegDeployment(SxSAssembly assembly, std::wstring regpath, int oper
 			printf("Skipping\n");
 		}
 		else if (over == nver) {
-			return S_FALSE;
+			DWORD origoperation;
+			RegGetDWORD(basekey, assembly.version, &origoperation);
+			if (origoperation == operation || (bToInstall && (origoperation == SXS_INSTALLED))) {
+				return S_FALSE;
+			}
+			RegAddDWORD(basekeypend + L"\\" + assembly.genname(), L"", operation);
 		}
 		else {
 			RegAddSZ(basekey, L"", assembly.version);
@@ -102,6 +118,8 @@ HRESULT SxSRemovePendingDeployments(std::wstring regpath)
 	std::wstring basekeypend = regpath + L"\\Microsoft\\Windows\\CurrentVersion\\CBS\\DeploymentsPending";
 	return RegDeleteSubKey(basekeypend);
 }
-std::vector<SxSPackage> SxSGetRegPKGS(std::wstring regpath) {
-	
+HRESULT SxSRemovePendingAssemblies(std::wstring regpath)
+{
+	std::wstring basekeypend = regpath + L"\\Microsoft\\Windows\\CurrentVersion\\CBS\\AssembliesPending";
+	return RegDeleteSubKey(basekeypend);
 }

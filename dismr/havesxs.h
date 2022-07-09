@@ -1,11 +1,13 @@
 #pragma once
 #include<stdio.h>
-#include<regex>
 #include<string>
 #include <algorithm>
 #include "md5.h"
 #include"xmlproc_msxml.h"
 #define SXS_HIVE_SOFT L"HKEY_LOCAL_MACHINE\\soft"
+#define SXS_HIVE_SYS L"HKEY_LOCAL_MACHINE\\sys"
+#define SXS_HIVE_DEF L"HKEY_LOCAL_MACHINE\\def"
+#define SXS_INSTALLED 0
 #define SXS_STAGED 9
 class SxSFile {
 public:
@@ -73,7 +75,6 @@ public:
 	std::wstring keyname;
 	std::vector<SxSRegistrySubKey> keys;
 };
-using std::regex_replace; using std::regex;
 class SxSAssembly{
 public:
 	   std::wstring name=L"none";

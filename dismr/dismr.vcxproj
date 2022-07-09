@@ -119,6 +119,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,21 +129,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="base64.cpp" />
     <ClCompile Include="dismr.cpp" />
     <ClCompile Include="getsxs.cpp" />
     <ClCompile Include="havesxs.cpp" />
     <ClCompile Include="md5.cpp" />
     <ClCompile Include="regstub.cpp" />
+    <ClCompile Include="sha256.cpp" />
     <ClCompile Include="stagesxs.cpp" />
+    <ClCompile Include="sxsinstall.cpp" />
     <ClCompile Include="sxsreg.cpp" />
     <ClCompile Include="xmlproc_msxml.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base64.h" />
     <ClInclude Include="getsxs.h" />
     <ClInclude Include="havesxs.h" />
     <ClInclude Include="md5.h" />
     <ClInclude Include="regstub.h" />
+    <ClInclude Include="sha256.h" />
     <ClInclude Include="stagesxs.h" />
+    <ClInclude Include="sxsinstall.h" />
     <ClInclude Include="sxsreg.h" />
     <ClInclude Include="xmlproc_msxml.h" />
   </ItemGroup>

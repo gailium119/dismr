@@ -62,3 +62,16 @@ std::vector<SxSAssembly> get_assemblies_pending(std::wstring imgdir, int desired
 	}
 	return assemblies;
 }
+
+std::wstring SxSGetHashForFile(std::wstring filepath) {
+	unsigned char avalue[32];
+	memset(avalue, 0, 32);
+	sha256_calcufile(filepath.c_str(), avalue, 32);
+	unsigned char str2[48];
+	memset(str2, 0, sizeof(unsigned char) * 48);
+	base64_encode(avalue, str2, 32, 1);
+	wchar_t strw[48];
+	mbstowcs_s(NULL, strw, (char*)str2, 48);
+	std::wstring str = strw;
+	return str;
+}
